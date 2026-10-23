@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PAW — Gestion commerciale</title>
+<style>
+/* ════════════════════════════════════════════
+   PAW Frontend — Design System
+════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0f1117;
+  --surface:  #181c27;
+  --surface2: #1f2435;
+  --border:   rgba(255,255,255,0.07);
+  --text:     #e8eaf0;
+  --muted:    #7a8099;
+  --accent:   #4f7dff;
+  --accent2:  #00d4aa;
+  --warn:     #ffb347;
+  --danger:   #ff5c5c;
+  --success:  #3ddc84;
+  --purple:   #a78bfa;
+  --fh: 'Space Grotesk', sans-serif;
+  --fb: 'Inter', sans-serif;
+}
+
+body { background:var(--bg); color:var(--text); font-family:var(--fb); font-size:14px; min-height:100vh; display:flex; }
+
+/* ── Sidebar ── */
+.sidebar { width:220px; min-height:100vh; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; position:fixed; top:0; left:0; bottom:0; z-index:100; }
+.logo { padding:24px 20px 20px; border-bottom:1px solid var(--border); }
+.logo-mark { font-family:var(--fh); font-size:22px; font-weight:700; color:var(--accent); }
+.logo-sub  { font-size:11px; color:var(--muted); margin-top:2px; }
+nav { padding:16px 12px; flex:1; overflow-y:auto; }
+.nav-label { font-size:10px; font-weight:600; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; padding:0 8px; margin:16px 0 6px; }
+.nav-item  { display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; color:var(--muted); cursor:pointer; font-size:13.5px; font-weight:500; margin-bottom:2px; transition:background .15s,color .15s; user-select:none; }
+.nav-item:hover  { background:var(--surface2); color:var(--text); }
+.nav-item.active { background:rgba(79,125,255,.15); color:var(--accent); }
+.nav-icon  { width:18px; height:18px; flex-shrink:0; }
+.nav-badge { margin-left:auto; background:var(--danger); color:#fff; font-size:10px; font-weight:600; padding:1px 6px; border-radius:20px; }
+.sidebar-footer { padding:16px; border-top:1px solid var(--border); }
+.user-card { display:flex; align-items:center; gap:10px; }
+.avatar { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-family:var(--fh); font-weight:700; font-size:13px; color:#fff; flex-shrink:0; }
+.user-name { font-size:13px; font-weight:500; }
+.user-role { font-size:11px; color:var(--muted); }
+
+/* ── Main ── */
+.main { flex:1; margin-left:220px; display:flex; flex-direction:column; min-height:100vh; }
+.topbar { padding:16px 28px; border-bottom:1px solid var(--border); background:var(--surface); display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; }
+.topbar-left h1 { font-family:var(--fh); font-size:18px; font-weight:600; }
+.topbar-left p  { font-size:12px; color:var(--muted); margin-top:2px; }
+.topbar-right   { display:flex; gap:10px; }
+.content { flex:1; padding:24px 28px; }
+
+/* ── Buttons ── */
+.btn { padding:8px 16px; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; border:none; font-family:var(--fb); transition:opacity .15s; }
+.btn:hover { opacity:.85; }
+.btn-primary { background:var(--accent); color:#fff; }
+.btn-ghost   { background:var(--surface2); color:var(--muted); border:1px solid var(--border); }
+.btn-success { background:var(--success); color:#0f1117; }
+.btn-danger  { background:var(--danger);  color:#fff; }
+.btn-sm      { padding:6px 12px; font-size:12px; }
+
+/* ── Cards ── */
+.card { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+.card-header { padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.card-title  { font-family:var(--fh); font-size:14px; font-weight:600; }
+.card-body   { padding:14px 18px; }
+
+/* ── Stat cards ── */
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+.stat-card  { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 20px; position:relative; overflow:hidden; }
+.stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+.stat-card.blue::before   { background:var(--accent);  }
+.stat-card.green::before  { background:var(--success); }
+.stat-card.warn::before   { background:var(--warn);    }
+.stat-card.danger::before { background:var(--danger);  }
+.stat-card.teal::before   { background:var(--accent2); }
+.stat-label { font-size:11px; color:var(--muted); font-weight:500; margin-bottom:6px; }
+.stat-value { font-family:var(--fh); font-size:24px; font-weight:700; line-height:1; }
+.stat-sub   { font-size:11px; color:var(--muted); margin-top:5px; }
+
+/* ── Grids ── */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+
+/* ── Badges ── */
+.badge { font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; display:inline-block; }
+.badge-paid    { background:rgba(61,220,132,.12); color:var(--success); }
+.badge-pending { background:rgba(255,179,71,.12);  color:var(--warn);    }
+.badge-late    { background:rgba(255,92,92,.12);   color:var(--danger);  }
+.badge-draft   { background:rgba(122,128,153,.15); color:var(--muted);   }
+.badge-bl      { background:rgba(167,139,250,.15); color:var(--purple);  }
+.badge-bc      { background:rgba(79,125,255,.15);  color:var(--accent);  }
+
+/* ── Tables ── */
+.tbl { width:100%; border-collapse:collapse; }
+.tbl th { font-size:11px; color:var(--muted); font-weight:600; text-align:left; padding:10px 14px; border-bottom:1px solid var(--border); text-transform:uppercase; letter-spacing:.04em; }
+.tbl td { padding:12px 14px; border-bottom:1px solid var(--border); font-size:13px; vertical-align:middle; }
+.tbl tr:last-child td { border-bottom:none; }
+.tbl tr:hover td { background:rgba(255,255,255,.02); }
+.tbl .clickable { cursor:pointer; }
+.tbl .clickable:hover td { background:rgba(79,125,255,.06); }
+
+/* ── Forms ── */
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.field { display:flex; flex-direction:column; gap:6px; }
+.field label { font-size:12px; color:var(--muted); font-weight:500; }
+.field input, .field select, .field textarea { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:9px 12px; color:var(--text); font-size:13px; font-family:var(--fb); outline:none; transition:border-color .15s; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color:var(--accent); }
+.field input::placeholder { color:var(--muted); }
+
+/* ── Search toolbar ── */
+.toolbar { display:flex; gap:10px; margin-bottom:16px; align-items:center; }
+.search-wrap { flex:1; position:relative; }
+.search-wrap input { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:9px 14px 9px 36px; color:var(--text); font-size:13px; font-family:var(--fb); outline:none; }
+.search-wrap input:focus { border-color:var(--accent); }
+.search-wrap input::placeholder { color:var(--muted); }
+.search-icon { position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--muted); }
+.filter-sel  { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:9px 12px; color:var(--text); font-size:13px; font-family:var(--fb); cursor:pointer; outline:none; }
+
+/* ── Tabs ── */
+.tabs { display:flex; gap:2px; margin-bottom:16px; background:var(--surface); border-radius:10px; padding:4px; width:fit-content; }
+.tab  { padding:7px 14px; border-radius:7px; font-size:13px; font-weight:500; cursor:pointer; color:var(--muted); transition:all .15s; }
+.tab.active { background:var(--surface2); color:var(--text); }
+.tab-badge  { display:inline-block; background:var(--danger); color:#fff; font-size:10px; font-weight:700; padding:1px 5px; border-radius:10px; margin-left:4px; }
+
+/* ── Modal ── */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:200; align-items:center; justify-content:center; padding:20px; }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--surface); border:1px solid var(--border); border-radius:16px; width:540px; max-width:100%; max-height:90vh; display:flex; flex-direction:column; }
+.modal-header { padding:18px 22px 14px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+.modal-title  { font-family:var(--fh); font-size:16px; font-weight:600; }
+.modal-close  { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; line-height:1; padding:2px 6px; }
+.modal-close:hover { color:var(--text); }
+.modal-body   { padding:18px 22px; overflow-y:auto; display:flex; flex-direction:column; gap:14px; flex:1; }
+.modal-footer { padding:14px 22px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
+
+/* ── Pages ── */
+.page { display:none; }
+.page.active { display:block; }
+
+/* ── Stock bars ── */
+.stock-bar-wrap { min-width:90px; }
+.stock-nums { display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px; }
+.stock-bar  { height:4px; background:var(--surface2); border-radius:4px; overflow:hidden; }
+.stock-fill { height:100%; border-radius:4px; }
+.fill-ok     { background:var(--success); }
+.fill-warn   { background:var(--warn); }
+.fill-danger { background:var(--danger); }
+
+/* ── Alert bar ── */
+.alert-bar { display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:10px; margin-bottom:16px; }
+.alert-bar.danger { background:rgba(255,92,92,.1); border:1px solid rgba(255,92,92,.25); }
+.alert-bar.warn   { background:rgba(255,179,71,.1); border:1px solid rgba(255,179,71,.25); }
+
+/* ── Chart mini ── */
+.chart-bars  { display:flex; align-items:flex-end; gap:5px; height:80px; }
+.bar-col     { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.bar-col span{ font-size:10px; color:var(--muted); }
+.bar-item    { width:100%; border-radius:3px 3px 0 0; transition:opacity .2s; }
+.bar-item:hover { opacity:.7; }
+
+/* ── Lignes document ── */
+.lignes-section { margin-top:12px; }
+.ligne-row { display:flex; gap:10px; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); }
+.ligne-row:last-child { border-bottom:none; }
+.ligne-row input { flex:2; background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:7px 10px; color:var(--text); font-size:12px; font-family:var(--fb); outline:none; }
+.ligne-row input.narrow { flex:1; }
+.ligne-row .remove-btn { background:none; border:none; color:var(--danger); cursor:pointer; font-size:18px; flex-shrink:0; }
+.add-ligne-btn { margin-top:8px; background:rgba(79,125,255,.1); border:1px dashed rgba(79,125,255,.4); color:var(--accent); border-radius:8px; padding:8px; width:100%; cursor:pointer; font-size:12px; font-family:var(--fb); }
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  .sidebar { transform:translateX(-100%); }
+  .main { margin-left:0; }
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+  .grid-2 { grid-template-columns:1fr; }
+  .content { padding:16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     SIDEBAR
+═══════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">PAW</div>
+    <div class="logo-sub">Gestion commerciale</div>
+  </div>
+  <nav>
+    <div class="nav-label">Principal</div>
+    <div class="nav-item active" onclick="goTo('dashboard')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Tableau de bord
+    </div>
+    <div class="nav-item" onclick="goTo('documents','FACTURE')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Factures
+    </div>
+    <div class="nav-item" onclick="goTo('documents','DEVIS')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Devis
+    </div>
+    <div class="nav-item" onclick="goTo('documents','BON_LIVRAISON')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      Bons de livraison
+    </div>
+    <div class="nav-item" onclick="goTo('documents','BON_COMMANDE')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Bons de commande
+    </div>
+    <div class="nav-label">Gestion</div>
+    <div class="nav-item" onclick="goTo('stock')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      Stock
+      <span class="nav-badge" id="badge-alertes">0</span>
+    </div>
+    <div class="nav-item" onclick="goTo('clients')">
+      <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      Clients
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card">
+      <div class="avatar" id="user-avatar">AB</div>
+      <div>
+        <div class="user-name" id="user-name">Chargement...</div>
+        <div class="user-role" id="user-role">—</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════
+     MAIN
+═══════════════════════════════════ -->
+<main class="main">
+
+  <!-- ── TOPBAR ── -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1 id="page-title">Tableau de bord</h1>
+      <p id="page-sub">Chargement...</p>
+    </div>
+    <div class="topbar-right" id="topbar-actions"></div>
+  </div>
+
+  <div class="content">
+
+    <!-- ════ PAGE : DASHBOARD ════ -->
+    <div id="page-dashboard" class="page active">
+      <div class="stats-grid">
+        <div class="stat-card blue"><div class="stat-label">CA du jour</div><div class="stat-value" id="dash-ca-jour">—</div><div class="stat-sub">Factures payées</div></div>
+        <div class="stat-card green"><div class="stat-label">CA du mois</div><div class="stat-value" id="dash-ca-mois">—</div><div class="stat-sub">Cumul mensuel</div></div>
+        <div class="stat-card warn"><div class="stat-label">En attente</div><div class="stat-value" id="dash-attente">—</div><div class="stat-sub" id="dash-attente-sub">—</div></div>
+        <div class="stat-card danger"><div class="stat-label">En retard</div><div class="stat-value" id="dash-retard">—</div><div class="stat-sub" id="dash-retard-sub">—</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Transactions récentes</div></div>
+          <div class="card-body" id="dash-transactions"><div class="stat-sub">Chargement...</div></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Alertes stock</div><span onclick="goTo('stock')" style="font-size:12px;color:var(--accent);cursor:pointer">Gérer</span></div>
+            <div class="card-body" id="dash-alertes"><div class="stat-sub">Chargement...</div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">CA — 7 jours</div></div>
+            <div class="card-body"><div class="chart-bars" id="dash-chart"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ PAGE : DOCUMENTS ════ -->
+    <div id="page-documents" class="page">
+      <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat-card blue"><div class="stat-label" id="doc-stat-label1">Total</div><div class="stat-value" id="doc-stat1">—</div></div>
+        <div class="stat-card warn"><div class="stat-label">En attente</div><div class="stat-value" id="doc-stat2">—</div></div>
+        <div class="stat-card danger"><div class="stat-label">En retard / Annulés</div><div class="stat-value" id="doc-stat3">—</div></div>
+      </div>
+      <div class="toolbar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Rechercher par client, numéro..." id="doc-search" oninput="filterDocs()">
+        </div>
+        <select class="filter-sel" id="doc-statut-filter" onchange="filterDocs()">
+          <option value="">Tous statuts</option>
+          <option value="brouillon">Brouillon</option>
+          <option value="envoyé">Envoyé</option>
+          <option value="validé">Validé</option>
+          <option value="payé">Payé</option>
+          <option value="en_retard">En retard</option>
+          <option value="annulé">Annulé</option>
+        </select>
+      </div>
+      <div class="card">
+        <table class="tbl">
+          <thead><tr>
+            <th>Numéro</th><th>Client</th><th>Date</th><th>Montant TTC</th><th>Statut</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="docs-tbody"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════ PAGE : STOCK ════ -->
+    <div id="page-stock" class="page">
+      <div class="stats-grid">
+        <div class="stat-card blue"><div class="stat-label">Références</div><div class="stat-value" id="stock-refs">—</div></div>
+        <div class="stat-card green"><div class="stat-label">Valeur achat</div><div class="stat-value" id="stock-val">—</div></div>
+        <div class="stat-card warn"><div class="stat-label">Stock faible</div><div class="stat-value" id="stock-faible">—</div></div>
+        <div class="stat-card danger"><div class="stat-label">Stock critique</div><div class="stat-value" id="stock-critique">—</div></div>
+      </div>
+      <div class="toolbar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Rechercher produit, référence..." id="stock-search" oninput="filterStock()">
+        </div>
+        <select class="filter-sel" id="stock-alerte-filter" onchange="filterStock()">
+          <option value="">Tous</option>
+          <option value="true">Alertes seulement</option>
+        </select>
+      </div>
+      <div class="card">
+        <table class="tbl">
+          <thead><tr>
+            <th>Produit</th><th>Catégorie</th><th>Stock</th><th>Prix achat</th><th>Prix vente</th><th>Statut</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="stock-tbody"><tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ════ PAGE : CLIENTS ════ -->
+    <div id="page-clients" class="page">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Rechercher un client..." id="client-search" oninput="filterClients()">
+        </div>
+      </div>
+      <div class="card">
+        <table class="tbl">
+          <thead><tr>
+            <th>Nom</th><th>Téléphone</th><th>Véhicules</th><th>Documents</th><th>CA total</th><th>Actions</th>
+          </tr></thead>
+          <tbody id="clients-tbody"><tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- ═══════════════════════════════════
+     MODALS
+═══════════════════════════════════ -->
+
+<!-- Modal : Nouveau document -->
+<div class="modal-overlay" id="modal-document">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-doc-title">Nouveau document</div>
+      <button class="modal-close" onclick="closeModal('modal-document')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="doc-type-input">
+      <div class="form-grid">
+        <div class="field">
+          <label>Client *</label>
+          <select id="doc-client-select"><option value="">Sélectionner...</option></select>
+        </div>
+        <div class="field">
+          <label>Mode de paiement</label>
+          <select id="doc-paiement">
+            <option value="especes">Espèces</option>
+            <option value="carte">Carte</option>
+            <option value="virement">Virement</option>
+            <option value="cheque">Chèque</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Date d'échéance</label>
+          <input type="date" id="doc-echeance">
+        </div>
+        <div class="field">
+          <label>Remise globale (%)</label>
+          <input type="number" id="doc-remise" value="0" min="0" max="100">
+        </div>
+      </div>
+      <div class="field" style="margin-top:4px">
+        <label>Notes</label>
+        <textarea id="doc-notes" rows="2" style="resize:vertical"></textarea>
+      </div>
+      <!-- Lignes -->
+      <div>
+        <label style="font-size:12px;color:var(--muted);font-weight:500">Lignes *</label>
+        <div id="lignes-container" class="lignes-section"></div>
+        <button class="add-ligne-btn" onclick="addLigne()">+ Ajouter une ligne</button>
+      </div>
+      <div style="text-align:right;font-family:var(--fh);font-size:15px;color:var(--accent2)" id="total-preview">Total TTC : 0 DA</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-document')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveDocument()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal : Nouveau client -->
+<div class="modal-overlay" id="modal-client">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Nouveau client</div>
+      <button class="modal-close" onclick="closeModal('modal-client')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field"><label>Nom *</label><input type="text" id="cl-nom" placeholder="Nom du client"></div>
+        <div class="field"><label>Téléphone</label><input type="text" id="cl-tel" placeholder="0555 000 000"></div>
+        <div class="field"><label>Email</label><input type="email" id="cl-email"></div>
+        <div class="field"><label>Adresse</label><input type="text" id="cl-adresse"></div>
+      </div>
+      <div class="field"><label>Notes</label><textarea id="cl-notes" rows="2" style="resize:vertical"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-client')">Annuler</button>
+      <button class="btn btn-primary" onclick="saveClient()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal : Entrée stock -->
+<div class="modal-overlay" id="modal-stock">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header">
+      <div class="modal-title">Entrée de stock</div>
+      <button class="modal-close" onclick="closeModal('modal-stock')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="stock-produit-id">
+      <div class="field"><label>Produit</label><input type="text" id="stock-produit-nom" readonly></div>
+      <div class="field"><label>Quantité à ajouter *</label><input type="number" id="stock-qty" min="0.1" step="0.1" placeholder="0"></div>
+      <div class="field"><label>Motif</label><input type="text" id="stock-motif" placeholder="Ex: Réception fournisseur Mobil"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-stock')">Annuler</button>
+      <button class="btn btn-success" onclick="saveEntreeStock()">Valider l'entrée</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal : Convertir document -->
+<div class="modal-overlay" id="modal-convertir">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-header">
+      <div class="modal-title">Convertir en...</div>
+      <button class="modal-close" onclick="closeModal('modal-convertir')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Choisissez le type de document cible. Les lignes seront copiées automatiquement.</p>
+      <input type="hidden" id="conv-source-id">
+      <div style="display:flex;flex-direction:column;gap:8px" id="conv-options"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════ -->
+<script>
+// ── Config API ──────────────────────────────────────
+const API = 'http://localhost:3000/api';
+let TOKEN = localStorage.getItem('paw_token') || '';
+let currentDocType = 'FACTURE';
+let allDocs = [], allStock = [], allClients = [];
+
+const h = () => ({ 'Content-Type':'application/json', 'Authorization':'Bearer '+TOKEN });
+const fmt = n => Number(n||0).toLocaleString('fr-DZ') + ' DA';
+const fmtNum = n => Number(n||0).toLocaleString('fr-DZ');
+
+async function api(method, path, body) {
+  const r = await fetch(API+path, { method, headers:h(), body: body ? JSON.stringify(body) : undefined });
+  const data = await r.json().catch(()=>({}));
+  if (!r.ok) throw new Error(data.error || 'Erreur ' + r.status);
+  return data;
+}
+
+// ── Navigation ──────────────────────────────────────
+const LABELS = {
+  dashboard: ['Tableau de bord', 'Vue d\'ensemble'],
+  FACTURE:   ['Factures', 'Gestion des factures clients'],
+  DEVIS:     ['Devis', 'Gestion des devis'],
+  BON_LIVRAISON: ['Bons de livraison', 'Gestion des livraisons'],
+  BON_COMMANDE:  ['Bons de commande', 'Gestion des commandes fournisseur'],
+  stock:     ['Gestion de stock', 'Catalogue et inventaire'],
+  clients:   ['Clients', 'Fiche clients et historique'],
+};
+
+const ACTIONS = {
+  dashboard: '',
+  stock:     '<button class="btn btn-ghost" onclick="openModalStockEntree()">+ Entrée stock</button><button class="btn btn-primary" onclick="openModalProduit()">+ Nouveau produit</button>',
+  clients:   '<button class="btn btn-primary" onclick="openModal(\'modal-client\')">+ Nouveau client</button>',
+};
+const DOCS_TYPES = ['FACTURE','DEVIS','BON_LIVRAISON','BON_COMMANDE'];
+DOCS_TYPES.forEach(t => ACTIONS[t] = `<button class="btn btn-primary" onclick="openModalDoc('${t}')">+ Nouveau ${labelDoc(t).toLowerCase()}</button>`);
+
+function labelDoc(t) {
+  return { FACTURE:'Facture', DEVIS:'Devis', BON_LIVRAISON:'Bon de livraison', BON_COMMANDE:'Bon de commande' }[t] || t;
+}
+function badgeDoc(statut) {
+  const map = { payé:'badge-paid', envoyé:'badge-pending', en_retard:'badge-late', brouillon:'badge-draft', validé:'badge-bl', annulé:'badge-late' };
+  return `<span class="badge ${map[statut]||'badge-draft'}">${statut}</span>`;
+}
+
+function goTo(page, docType) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const key = docType || page;
+  const lbl = LABELS[key] || ['—','—'];
+  document.getElementById('page-title').textContent = lbl[0];
+  document.getElementById('page-sub').textContent   = lbl[1];
+  document.getElementById('topbar-actions').innerHTML = ACTIONS[key] || '';
+
+  if (DOCS_TYPES.includes(docType||'')) {
+    currentDocType = docType;
+    document.getElementById('page-documents').classList.add('active');
+    loadDocuments(docType);
+  } else {
+    document.getElementById('page-'+page).classList.add('active');
+    if (page==='dashboard') loadDashboard();
+    if (page==='stock')     loadStock();
+    if (page==='clients')   loadClients();
+  }
+
+  // Activer nav
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick')?.includes(`'${docType||page}'`)) n.classList.add('active');
+  });
+}
+
+// ── Dashboard ───────────────────────────────────────
+async function loadDashboard() {
+  try {
+    const d = await api('GET','/dashboard');
+    const k = d.kpis;
+    document.getElementById('dash-ca-jour').textContent = fmt(k.ca_jour);
+    document.getElementById('dash-ca-mois').textContent = fmt(k.ca_mois);
+    document.getElementById('dash-attente').textContent = k.nb_attente;
+    document.getElementById('dash-attente-sub').textContent = fmt(k.montant_attente);
+    document.getElementById('dash-retard').textContent  = k.nb_retard;
+    document.getElementById('dash-retard-sub').textContent  = fmt(k.montant_retard);
+    document.getElementById('badge-alertes').textContent = d.alertes_stock.length;
+
+    // Transactions
+    document.getElementById('dash-transactions').innerHTML = (d.transactions||[]).map(t => `
+      <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="flex:1">
+          <div style="font-weight:500;font-size:13px">${t.client_nom||'—'}</div>
+          <div style="font-size:11px;color:var(--muted)">${t.numero} · ${labelDoc(t.type)}</div>
+        </div>
+        <div style="font-family:var(--fh);font-weight:600">${fmt(t.montant_ttc)}</div>
+        ${badgeDoc(t.statut)}
+      </div>`).join('') || '<div style="color:var(--muted)">Aucune transaction</div>';
+
+    // Alertes
+    document.getElementById('dash-alertes').innerHTML = (d.alertes_stock||[]).map(a => `
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
+        <div style="width:8px;height:8px;border-radius:50%;background:${a.stock_actuel==0?'var(--danger)':'var(--warn)'}"></div>
+        <div style="flex:1;font-size:13px;font-weight:500">${a.nom}</div>
+        <div style="font-size:12px;color:var(--danger);font-weight:600">${a.stock_actuel} ${a.unite}</div>
+      </div>`).join('') || '<div style="color:var(--muted)">Aucune alerte</div>';
+
+    // Mini chart
+    const evol = d.evolution_ca || [];
+    const maxCA = Math.max(...evol.map(e=>Number(e.ca)), 1);
+    document.getElementById('dash-chart').innerHTML = evol.length
+      ? evol.map(e => {
+          const h = Math.round(Number(e.ca)/maxCA*72);
+          return `<div class="bar-col"><div class="bar-item" style="height:${h}px;background:var(--accent)"></div><span>${e.jour?.slice(5)||''}</span></div>`;
+        }).join('')
+      : '<div style="color:var(--muted);font-size:12px">Pas de données</div>';
+  } catch(e) { console.error(e); }
+}
+
+// ── Documents ───────────────────────────────────────
+async function loadDocuments(type) {
+  try {
+    const data = await api('GET', `/documents?type=${type}&limit=100`);
+    allDocs = data;
+    renderDocs(data);
+    const total   = data.length;
+    const attente = data.filter(d=>d.statut==='envoyé').length;
+    const retard  = data.filter(d=>['en_retard','annulé'].includes(d.statut)).length;
+    document.getElementById('doc-stat1').textContent = total;
+    document.getElementById('doc-stat2').textContent = attente;
+    document.getElementById('doc-stat3').textContent = retard;
+  } catch(e) { console.error(e); }
+}
+
+function renderDocs(data) {
+  const tbody = document.getElementById('docs-tbody');
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px">Aucun document</td></tr>`; return; }
+  tbody.innerHTML = data.map(d => `
+    <tr class="clickable">
+      <td style="color:var(--muted);font-size:12px;font-weight:500">${d.numero}</td>
+      <td><div style="font-weight:500">${d.client_nom||'—'}</div><div style="font-size:11px;color:var(--muted)">${d.createur||''}</div></td>
+      <td style="font-size:12px;color:var(--muted)">${d.date_emission?.slice(0,10)||'—'}</td>
+      <td style="font-family:var(--fh);font-weight:600">${fmt(d.montant_ttc)}</td>
+      <td>${badgeDoc(d.statut)}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="convertirDoc('${d.id}','${d.numero}')">🔄 Convertir</button>
+          ${d.statut!=='payé' ? `<button class="btn btn-success btn-sm" onclick="marquerPaye('${d.id}')">✓ Payé</button>` : ''}
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function filterDocs() {
+  const q = document.getElementById('doc-search').value.toLowerCase();
+  const s = document.getElementById('doc-statut-filter').value;
+  renderDocs(allDocs.filter(d =>
+    (!q || (d.numero+d.client_nom||'').toLowerCase().includes(q)) &&
+    (!s || d.statut===s)
+  ));
+}
+
+async function marquerPaye(id) {
+  try {
+    await api('PATCH', `/documents/${id}/statut`, { statut:'payé' });
+    loadDocuments(currentDocType);
+  } catch(e) { alert(e.message); }
+}
+
+// ── Conversion ──────────────────────────────────────
+function convertirDoc(id, numero) {
+  document.getElementById('conv-source-id').value = id;
+  const types = ['FACTURE','DEVIS','BON_LIVRAISON','BON_COMMANDE'];
+  document.getElementById('conv-options').innerHTML = types.map(t => `
+    <button class="btn btn-ghost" style="width:100%;text-align:left;padding:12px 16px;font-size:13px"
+      onclick="doConvertir('${t}')">
+      → ${labelDoc(t)}
+    </button>`).join('');
+  openModal('modal-convertir');
+}
+
+async function doConvertir(typeCible) {
+  const id = document.getElementById('conv-source-id').value;
+  try {
+    const res = await api('POST', `/documents/${id}/convertir`, { type_cible: typeCible });
+    closeModal('modal-convertir');
+    alert(`✅ Converti en ${labelDoc(typeCible)} : ${res.document.numero}`);
+    loadDocuments(currentDocType);
+  } catch(e) { alert('Erreur : ' + e.message); }
+}
+
+// ── Stock ────────────────────────────────────────────
+async function loadStock() {
+  try {
+    const [produits, valeur] = await Promise.all([
+      api('GET','/produits?limit=200'),
+      api('GET','/stock/valeur'),
+    ]);
+    allStock = produits;
+    document.getElementById('stock-refs').textContent    = fmtNum(valeur.nb_references);
+    document.getElementById('stock-val').textContent     = fmt(valeur.valeur_achat);
+    document.getElementById('stock-faible').textContent  = fmtNum(valeur.nb_alertes);
+    document.getElementById('stock-critique').textContent = produits.filter(p=>p.stock_actuel<=0).length;
+    renderStock(produits);
+  } catch(e) { console.error(e); }
+}
+
+function renderStock(data) {
+  const tbody = document.getElementById('stock-tbody');
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px">Aucun produit</td></tr>`; return; }
+  tbody.innerHTML = data.map(p => {
+    const pct = p.stock_minimum > 0 ? Math.min(100, Math.round(p.stock_actuel/p.stock_minimum*100)) : 100;
+    const cls = pct<=20 ? 'fill-danger' : pct<=60 ? 'fill-warn' : 'fill-ok';
+    const statut = p.stock_actuel <= 0 ? `<span class="badge badge-late">Rupture</span>`
+      : p.stock_actuel <= p.stock_minimum ? `<span class="badge badge-pending">Faible</span>`
+      : `<span class="badge badge-paid">Normal</span>`;
+    return `<tr>
+      <td>
+        <div style="font-weight:500;cursor:pointer;color:var(--accent2)" onclick="voirStatsProduit('${p.id}')">${p.nom}</div>
+        <div style="font-size:11px;color:var(--muted)">${p.reference||''} · ${p.fournisseur||'—'}</div>
+      </td>
+      <td style="font-size:12px;color:var(--muted)">${p.categorie||'—'}</td>
+      <td>
+        <div class="stock-bar-wrap">
+          <div class="stock-nums"><span style="font-weight:600;color:${pct<=20?'var(--danger)':pct<=60?'var(--warn)':'inherit'}">${p.stock_actuel} ${p.unite}</span><span style="color:var(--muted)">min ${p.stock_minimum}</span></div>
+          <div class="stock-bar"><div class="stock-fill ${cls}" style="width:${pct}%"></div></div>
+        </div>
+      </td>
+      <td style="color:var(--muted)">${fmt(p.prix_achat)}</td>
+      <td style="color:var(--accent2);font-weight:500">${fmt(p.prix_vente)}</td>
+      <td>${statut}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="openEntreeStock('${p.id}','${p.nom.replace(/'/g,'\\'')}')">📥 Entrée</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterStock() {
+  const q = document.getElementById('stock-search').value.toLowerCase();
+  const al = document.getElementById('stock-alerte-filter').value;
+  renderStock(allStock.filter(p =>
+    (!q || (p.nom+p.reference||'').toLowerCase().includes(q)) &&
+    (!al || (al==='true' && p.stock_actuel <= p.stock_minimum))
+  ));
+}
+
+async function voirStatsProduit(id) {
+  try {
+    const data = await api('GET', `/produits/${id}/stats`);
+    const p = data.produit;
+    const k = data.kpis;
+    const topClients = (data.top_clients||[]).slice(0,5)
+      .map((c,i) => `<li style="padding:6px 0;font-size:13px;border-bottom:1px solid var(--border)"><strong>#${i+1} ${c.nom}</strong> — ${fmtNum(c.qty_totale)} ${p.unite} · ${fmt(c.ca_total)}</li>`).join('');
+    const fourns = (data.fournisseurs||[])
+      .map(f => `<li style="padding:6px 0;font-size:13px;border-bottom:1px solid var(--border)"><strong>${f.fournisseur||'—'}</strong> · ${f.nb_commandes} commande(s) · ${fmt(f.montant_total)}</li>`).join('');
+
+    alert(`📊 Statistiques — ${p.nom}
+────────────────────────
+CA total       : ${fmt(k.ca_total)}
+Qté facturée   : ${k.qty_facturee} ${p.unite}
+Qté livrée     : ${k.qty_livree} ${p.unite}
+En cours devis : ${k.qty_en_cours} ${p.unite}
+Nb clients     : ${k.nb_clients}
+Marge          : ${p.marge_pct}%
+
+Top clients :
+${(data.top_clients||[]).slice(0,3).map((c,i)=>`  ${i+1}. ${c.nom} — ${fmt(c.ca_total)}`).join('\n')}
+
+(Ouvrir la fiche produit complète depuis le tableau)`);
+  } catch(e) { alert('Impossible de charger les stats : ' + e.message); }
+}
+
+function openEntreeStock(id, nom) {
+  document.getElementById('stock-produit-id').value = id;
+  document.getElementById('stock-produit-nom').value = nom;
+  document.getElementById('stock-qty').value = '';
+  document.getElementById('stock-motif').value = '';
+  openModal('modal-stock');
+}
+
+function openModalStockEntree() { openEntreeStock('',''); }
+
+async function saveEntreeStock() {
+  const produit_id = document.getElementById('stock-produit-id').value;
+  const quantite   = parseFloat(document.getElementById('stock-qty').value);
+  const motif      = document.getElementById('stock-motif').value;
+  if (!produit_id || !quantite) return alert('Produit et quantité requis');
+  try {
+    await api('POST', '/stock/entree', { produit_id, quantite, motif });
+    closeModal('modal-stock');
+    loadStock();
+  } catch(e) { alert(e.message); }
+}
+
+// ── Clients ──────────────────────────────────────────
+async function loadClients() {
+  try {
+    const data = await api('GET','/clients?limit=200');
+    allClients = data;
+    renderClients(data);
+  } catch(e) { console.error(e); }
+}
+
+function renderClients(data) {
+  const tbody = document.getElementById('clients-tbody');
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px">Aucun client</td></tr>`; return; }
+  tbody.innerHTML = data.map(c => `
+    <tr>
+      <td style="font-weight:500">${c.nom}</td>
+      <td style="color:var(--muted)">${c.telephone||'—'}</td>
+      <td>${c.nb_vehicules||0}</td>
+      <td>${c.nb_documents||0}</td>
+      <td style="color:var(--accent2);font-weight:600">${fmt(c.ca_total)}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="goTo('documents','FACTURE')">Voir documents</button></td>
+    </tr>`).join('');
+}
+
+function filterClients() {
+  const q = document.getElementById('client-search').value.toLowerCase();
+  renderClients(allClients.filter(c => !q || c.nom.toLowerCase().includes(q) || (c.telephone||'').includes(q)));
+}
+
+async function saveClient() {
+  const body = {
+    nom:     document.getElementById('cl-nom').value,
+    telephone: document.getElementById('cl-tel').value,
+    email:   document.getElementById('cl-email').value,
+    adresse: document.getElementById('cl-adresse').value,
+    notes:   document.getElementById('cl-notes').value,
+  };
+  if (!body.nom) return alert('Nom requis');
+  try {
+    await api('POST', '/clients', body);
+    closeModal('modal-client');
+    loadClients();
+  } catch(e) { alert(e.message); }
+}
+
+// ── Modal document ───────────────────────────────────
+async function openModalDoc(type) {
+  document.getElementById('doc-type-input').value = type;
+  document.getElementById('modal-doc-title').textContent = 'Nouveau ' + labelDoc(type).toLowerCase();
+  document.getElementById('lignes-container').innerHTML = '';
+  document.getElementById('total-preview').textContent = 'Total TTC : 0 DA';
+  addLigne();
+  // Charger clients
+  if (!allClients.length) await loadClients();
+  const sel = document.getElementById('doc-client-select');
+  sel.innerHTML = '<option value="">Sélectionner un client...</option>' +
+    allClients.map(c => `<option value="${c.id}">${c.nom}</option>`).join('');
+  openModal('modal-document');
+}
+
+function addLigne() {
+  const container = document.getElementById('lignes-container');
+  const div = document.createElement('div');
+  div.className = 'ligne-row';
+  div.innerHTML = `
+    <input type="text"   class="ligne-des"  placeholder="Désignation" oninput="updateTotal()">
+    <input type="number" class="ligne-qty   narrow" placeholder="Qté" value="1" min="0.1" step="0.1" oninput="updateTotal()">
+    <input type="number" class="ligne-pu    narrow" placeholder="Prix U." min="0" oninput="updateTotal()">
+    <input type="number" class="ligne-rem   narrow" placeholder="Rem%" value="0" min="0" max="100" oninput="updateTotal()">
+    <button class="remove-btn" onclick="this.parentElement.remove();updateTotal()">×</button>`;
+  container.appendChild(div);
+}
+
+function updateTotal() {
+  const lignes = document.querySelectorAll('#lignes-container .ligne-row');
+  let ht = 0;
+  lignes.forEach(l => {
+    const qty = parseFloat(l.querySelector('.ligne-qty').value)||0;
+    const pu  = parseFloat(l.querySelector('.ligne-pu').value)||0;
+    const rem = parseFloat(l.querySelector('.ligne-rem').value)||0;
+    ht += qty * pu * (1 - rem/100);
+  });
+  const remG = parseFloat(document.getElementById('doc-remise').value)||0;
+  const apres = ht * (1 - remG/100);
+  const ttc = apres * 1.09;
+  document.getElementById('total-preview').textContent = 'Total TTC : ' + ttc.toLocaleString('fr-DZ',{maximumFractionDigits:0}) + ' DA';
+}
+
+async function saveDocument() {
+  const type      = document.getElementById('doc-type-input').value;
+  const client_id = document.getElementById('doc-client-select').value;
+  const paiement  = document.getElementById('doc-paiement').value;
+  const echeance  = document.getElementById('doc-echeance').value;
+  const remise    = parseFloat(document.getElementById('doc-remise').value)||0;
+  const notes     = document.getElementById('doc-notes').value;
+  if (!client_id) return alert('Client requis');
+
+  const lignes = [];
+  document.querySelectorAll('#lignes-container .ligne-row').forEach(l => {
+    const des = l.querySelector('.ligne-des').value;
+    const qty = parseFloat(l.querySelector('.ligne-qty').value)||0;
+    const pu  = parseFloat(l.querySelector('.ligne-pu').value)||0;
+    const rem = parseFloat(l.querySelector('.ligne-rem').value)||0;
+    if (des && qty && pu) lignes.push({ designation:des, quantite:qty, prix_unitaire:pu, remise:rem });
+  });
+  if (!lignes.length) return alert('Au moins une ligne requise');
+
+  try {
+    await api('POST', '/documents', { type, client_id, mode_paiement:paiement, date_echeance:echeance||null, notes, remise, tva:9, lignes });
+    closeModal('modal-document');
+    loadDocuments(type);
+  } catch(e) { alert(e.message); }
+}
+
+function openModalProduit() { alert('Formulaire nouveau produit — à intégrer selon vos catégories'); }
+
+// ── Helpers modals ────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Fermer modal en cliquant dehors
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target===m) m.classList.remove('open'); });
+});
+
+// ── Init ──────────────────────────────────────────────
+(async function init() {
+  // Vérifier auth — si pas de token, afficher le dashboard quand même (mode démo)
+  if (!TOKEN) {
+    document.getElementById('user-name').textContent = 'Mode démo';
+    document.getElementById('user-role').textContent = 'Connectez-vous';
+    document.getElementById('user-avatar').textContent = '?';
+  } else {
+    try {
+      const me = await api('GET', '/auth/me');
+      document.getElementById('user-name').textContent = me.nom;
+      document.getElementById('user-role').textContent = me.role;
+      document.getElementById('user-avatar').textContent = me.nom.slice(0,2).toUpperCase();
+    } catch {}
+  }
+
+  // Date courante
+  document.getElementById('page-sub').textContent = new Date().toLocaleDateString('fr-FR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+  await loadDashboard();
+})();
+</script>
+</body>
+</html>
